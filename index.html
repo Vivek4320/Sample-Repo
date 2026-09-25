@@ -3,401 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>To-Do List</title>
-  <style>
-    :root {
-      --bg: #f4f6f8;
-      --surface: #ffffff;
-      --text: #1a1d21;
-      --text-muted: #5c6570;
-      --border: #e2e6ea;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --danger: #dc2626;
-      --danger-hover: #b91c1c;
-      --shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
-      --radius: 12px;
-      --complete: #16a34a;
-    }
-
-    [data-theme="dark"] {
-      --bg: #0f1419;
-      --surface: #1a222d;
-      --text: #e8eaed;
-      --text-muted: #9aa3af;
-      --border: #2d3744;
-      --accent: #3b82f6;
-      --accent-hover: #60a5fa;
-      --danger: #f87171;
-      --danger-hover: #ef4444;
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      transition: background 0.25s ease, color 0.25s ease;
-    }
-
-    .app {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem 3rem;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(1.5rem, 4vw, 1.75rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .theme-toggle {
-      flex-shrink: 0;
-      padding: 0.5rem 0.85rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--surface);
-      color: var(--text);
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: border-color 0.2s, transform 0.15s;
-    }
-
-    .theme-toggle:hover {
-      border-color: var(--accent);
-    }
-
-    .theme-toggle:active {
-      transform: scale(0.98);
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 1.25rem;
-      transition: background 0.25s, border-color 0.25s;
-    }
-
-    .add-form {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .add-form input {
-      flex: 1;
-      min-width: 0;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 1rem;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .add-form input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-    }
-
-    [data-theme="dark"] .add-form input:focus {
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-    }
-
-    .btn {
-      padding: 0.75rem 1.15rem;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 0.9375rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.2s, transform 0.15s;
-    }
-
-    .btn:active {
-      transform: scale(0.98);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-    }
-
-    .btn-delete {
-      padding: 0.4rem 0.65rem;
-      background: transparent;
-      color: var(--danger);
-      border: 1px solid var(--border);
-      font-size: 0.8125rem;
-      font-weight: 500;
-    }
-
-    .btn-delete:hover {
-      background: rgba(220, 38, 38, 0.08);
-      border-color: var(--danger);
-      color: var(--danger-hover);
-    }
-
-    [data-theme="dark"] .btn-delete:hover {
-      background: rgba(248, 113, 113, 0.12);
-    }
-
-    .task-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .task-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 0.85rem;
-      border: 1px solid var(--border);
-      border-radius: calc(var(--radius) - 2px);
-      background: var(--bg);
-      animation: fadeIn 0.25s ease;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-4px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .task-item input[type="checkbox"] {
-      width: 1.15rem;
-      height: 1.15rem;
-      accent-color: var(--complete);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .task-label {
-      flex: 1;
-      min-width: 0;
-      word-break: break-word;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .task-item.completed .task-label {
-      text-decoration: line-through;
-      color: var(--text-muted);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 2rem 1rem;
-      color: var(--text-muted);
-      font-size: 0.9375rem;
-    }
-
-    .empty-state.hidden {
-      display: none;
-    }
-
-    @media (max-width: 400px) {
-      .add-form {
-        flex-direction: column;
-      }
-
-      .btn-primary {
-        width: 100%;
-      }
-    }
-  </style>
+  <meta name="description" content="A simple, responsive calculator." />
+  <title>Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <h1>My Tasks</h1>
-      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        Dark mode
-      </button>
+  <main class="calculator" aria-label="Calculator">
+    <header class="calculator__header">
+      <span class="calculator__eyebrow">Everyday math</span>
+      <h1>Calculator</h1>
     </header>
 
-    <main class="card">
-      <form class="add-form" id="addForm" autocomplete="off">
-        <input
-          type="text"
-          id="taskInput"
-          placeholder="What needs to be done?"
-          aria-label="New task"
-          maxlength="500"
-        />
-        <button type="submit" class="btn btn-primary">Add Task</button>
-      </form>
+    <section class="calculator__body">
+      <output class="display" id="display" aria-live="polite" aria-label="Calculator display">0</output>
 
-      <p class="empty-state" id="emptyState">No tasks yet. Add one above!</p>
-      <ul class="task-list" id="taskList" aria-live="polite"></ul>
-    </main>
-  </div>
+      <div class="keypad" aria-label="Calculator keys">
+        <button class="key key--clear" type="button" data-action="clear">C</button>
+        <button class="key key--operator" type="button" data-value="/" aria-label="Divide">÷</button>
+        <button class="key key--operator" type="button" data-value="*" aria-label="Multiply">×</button>
+        <button class="key key--operator" type="button" data-value="-" aria-label="Subtract">−</button>
 
-  <script>
-    const STORAGE_KEY = "todo-app-tasks";
-    const THEME_KEY = "todo-app-theme";
+        <button class="key" type="button" data-value="7">7</button>
+        <button class="key" type="button" data-value="8">8</button>
+        <button class="key" type="button" data-value="9">9</button>
+        <button class="key key--operator" type="button" data-value="+" aria-label="Add">+</button>
 
-    const addForm = document.getElementById("addForm");
-    const taskInput = document.getElementById("taskInput");
-    const taskList = document.getElementById("taskList");
-    const emptyState = document.getElementById("emptyState");
-    const themeToggle = document.getElementById("themeToggle");
+        <button class="key" type="button" data-value="4">4</button>
+        <button class="key" type="button" data-value="5">5</button>
+        <button class="key" type="button" data-value="6">6</button>
+        <button class="key key--equals" type="button" data-action="calculate" aria-label="Equals">=</button>
 
-    let tasks = loadTasks();
+        <button class="key" type="button" data-value="1">1</button>
+        <button class="key" type="button" data-value="2">2</button>
+        <button class="key" type="button" data-value="3">3</button>
 
-    function loadTasks() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function saveTasks() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    }
-
-    function generateId() {
-      return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
-    }
-
-    function updateEmptyState() {
-      emptyState.classList.toggle("hidden", tasks.length > 0);
-    }
-
-    function renderTasks() {
-      taskList.innerHTML = "";
-      tasks.forEach((task) => {
-        const li = document.createElement("li");
-        li.className = "task-item" + (task.completed ? " completed" : "");
-        li.dataset.id = task.id;
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = task.completed;
-        checkbox.setAttribute("aria-label", "Mark task complete");
-
-        const label = document.createElement("span");
-        label.className = "task-label";
-        label.textContent = task.text;
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.type = "button";
-        deleteBtn.className = "btn btn-delete";
-        deleteBtn.textContent = "Delete";
-        deleteBtn.setAttribute("aria-label", "Delete task");
-
-        checkbox.addEventListener("change", () => toggleTask(task.id));
-        label.addEventListener("click", () => {
-          checkbox.checked = !checkbox.checked;
-          toggleTask(task.id);
-        });
-        deleteBtn.addEventListener("click", () => deleteTask(task.id));
-
-        li.appendChild(checkbox);
-        li.appendChild(label);
-        li.appendChild(deleteBtn);
-        taskList.appendChild(li);
-      });
-      updateEmptyState();
-    }
-
-    function addTask(text) {
-      const trimmed = text.trim();
-      if (!trimmed) return;
-      tasks.push({ id: generateId(), text: trimmed, completed: false });
-      saveTasks();
-      renderTasks();
-    }
-
-    function toggleTask(id) {
-      const task = tasks.find((t) => t.id === id);
-      if (!task) return;
-      task.completed = !task.completed;
-      saveTasks();
-      renderTasks();
-    }
-
-    function deleteTask(id) {
-      tasks = tasks.filter((t) => t.id !== id);
-      saveTasks();
-      renderTasks();
-    }
-
-    function applyTheme(theme) {
-      const isDark = theme === "dark";
-      document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-      themeToggle.textContent = isDark ? "Light mode" : "Dark mode";
-      themeToggle.setAttribute(
-        "aria-label",
-        isDark ? "Switch to light mode" : "Switch to dark mode"
-      );
-    }
-
-    function initTheme() {
-      const saved = localStorage.getItem(THEME_KEY);
-      const prefersDark =
-        window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const theme = saved === "dark" || saved === "light" ? saved : prefersDark ? "dark" : "light";
-      applyTheme(theme);
-    }
-
-    themeToggle.addEventListener("click", () => {
-      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-      const next = isDark ? "light" : "dark";
-      localStorage.setItem(THEME_KEY, next);
-      applyTheme(next);
-    });
-
-    addForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      addTask(taskInput.value);
-      taskInput.value = "";
-      taskInput.focus();
-    });
-
-    initTheme();
-    renderTasks();
-  </script>
+        <button class="key key--zero" type="button" data-value="0">0</button>
+        <button class="key" type="button" data-value=".">.</button>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
