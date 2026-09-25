@@ -1,8 +1,32 @@
 const display = document.getElementById("display");
 const keys = document.querySelectorAll(".key");
+const themeToggle = document.getElementById("themeToggle");
+const themeLabel = themeToggle.querySelector(".theme-toggle__label");
+const themeIcon = themeToggle.querySelector(".theme-toggle__icon");
 
 let expression = "";
 let hasResult = false;
+
+// Apply the selected theme and keep the toggle accessible as its state changes.
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+  document.documentElement.dataset.theme = isDark ? "dark" : "light";
+  themeLabel.textContent = isDark ? "Light" : "Dark";
+  themeIcon.textContent = isDark ? "☀" : "◐";
+  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+}
+
+function initializeTheme() {
+  const savedTheme = localStorage.getItem("calculator-theme");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(savedTheme || (prefersDark ? "dark" : "light"));
+}
+
+themeToggle.addEventListener("click", () => {
+  const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("calculator-theme", nextTheme);
+  applyTheme(nextTheme);
+});
 
 // Keep the display in sync with the expression currently being entered.
 function updateDisplay(value = expression || "0") {
@@ -76,3 +100,5 @@ document.addEventListener("keydown", (event) => {
     updateDisplay();
   }
 });
+
+initializeTheme();

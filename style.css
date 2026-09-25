@@ -12,6 +12,16 @@
   --shadow: 0 24px 60px rgba(67, 53, 34, 0.15);
 }
 
+[data-theme="dark"] {
+  --background: #172126;
+  --surface: #202d32;
+  --surface-muted: #2b3a3e;
+  --text: #f3eee5;
+  --muted: #b8b0a5;
+  --border: #425156;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -25,6 +35,7 @@ body {
   background: radial-gradient(circle at top left, #fffaf0 0, transparent 42%), var(--background);
   color: var(--text);
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  transition: background 180ms ease, color 180ms ease;
 }
 
 .calculator {
@@ -35,9 +46,14 @@ body {
   background: var(--surface);
   box-shadow: var(--shadow);
   animation: appear 500ms ease-out both;
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .calculator__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
   padding: 1.7rem 1.7rem 1.1rem;
 }
 
@@ -54,6 +70,44 @@ h1 {
   font-family: Georgia, serif;
   font-size: 1.7rem;
   font-weight: 400;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  background: var(--surface-muted);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(217, 101, 67, 0.35);
+  outline-offset: 2px;
+}
+
+.theme-toggle:active {
+  transform: translateY(1px);
+}
+
+.theme-toggle__icon {
+  color: var(--accent);
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .calculator__body {
@@ -74,6 +128,7 @@ h1 {
   text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: background 180ms ease, color 180ms ease;
 }
 
 .keypad {
@@ -94,6 +149,23 @@ h1 {
   font-size: 1.25rem;
   font-weight: 700;
   transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+[data-theme="dark"] .key {
+  background: #344348;
+}
+
+[data-theme="dark"] .key:hover {
+  background: #405157;
+}
+
+[data-theme="dark"] .key--clear {
+  background: #613d36;
+  color: #ffb39d;
+}
+
+[data-theme="dark"] .key--clear:hover {
+  background: #75493f;
 }
 
 .key:hover {
